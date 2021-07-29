@@ -9,6 +9,8 @@ import (
 	"github.com/qbarrand/arbalete/internal/app"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 
 	"github.com/qbarrand/arbalete/internal/config"
 )
@@ -24,7 +26,12 @@ func main() {
 		log.Fatal().Err(err).Msg("Could not create a logger")
 	}
 
-	a, err := app.NewApp()
+	db, err := gorm.Open(sqlite.Open(cfg.DBPath))
+	if err != nil {
+		log.Fatal().Err(err).Msg("Could not open the database")
+	}
+
+	a, err := app.NewApp(db)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Could not create an app")
 	}
